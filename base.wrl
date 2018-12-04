@@ -1,7 +1,8 @@
 #VRML V2.0 utf8
 
-DEF cam Transform{
-  center -6.0 -4.2 0
+#caméra suivant la balle
+DEF camera Transform{
+  center -6.0 -4.2 0 #centre de rotation de la caméra
   children Viewpoint{
     fieldOfView 0.785392
     position -6.0 -3.5 3.0
@@ -27,17 +28,14 @@ DEF Balle Transform{
 
 DEF	KS KbdSensor{ isActive TRUE }
 
-
-DEF	SCR Script	{
-    eventIn	SFInt32	kd    # kd = key down
+DEF	RotateCam Script	{
+  eventIn	SFInt32	KeyPressed
 	eventOut SFRotation	Orientation
-
-	field SFFloat angle 0	   # Angle de rotation (rad), 0 étant orienté vers la droite de l'écran
-
+	field SFFloat angle 0	   # Angle de rotation
 
     url ["javascript:
 
-	function kd(v, t){
+	function KeyPressed(v, t){
 			if (v == 65601)	// Touche 'a'  --> tourne dans le sens anti-horaire
 			{ angle = angle + 0.02; }
 
@@ -45,7 +43,7 @@ DEF	SCR Script	{
 			{ angle = angle - 0.02; }
 
 			Orientation[0] = 0;
-			Orientation[1] = 1;
+			Orientation[1] = 1; //rotation sur l'axe y
 			Orientation[2] = 0;
 			Orientation[3] = angle;
 		}
@@ -54,6 +52,12 @@ DEF	SCR Script	{
 	"]	# Fin du corps du script
 }
 
+#rotation de la caméra autour de la balle
+ROUTE KS.keyDown TO RotateCam.KeyPressed
+ROUTE RotateCam.Orientation TO camera.rotation
 
-ROUTE KS.keyDown TO SCR.kd
-ROUTE SCR.Orientation TO cam.rotation  #	Orientation de la boîte
+ROUTE KS.keyDown TO BallMove.KP
+ROUTE BallMove.Movement TO Balle.translation
+
+ROUTE KS.keyDown TO CamMove.KP
+ROUTE CamMove.Movement TO camera.translation
