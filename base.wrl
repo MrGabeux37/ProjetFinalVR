@@ -37,10 +37,10 @@ DEF	RotateCam Script	{
 
 	function KeyPressed(v, t){
 			if (v == 65601)	// Touche 'a'  --> tourne dans le sens anti-horaire
-			{ angle = angle + 0.02; }
+			{ angle = angle - 0.02; }
 
 			if (v == 65604)	// Touche 'd'  --> tourne dans le sens horaire
-			{ angle = angle - 0.02; }
+			{ angle = angle + 0.02; }
 
 			Orientation[0] = 0;
 			Orientation[1] = 1; //rotation sur l'axe y
@@ -56,8 +56,8 @@ DEF	RotateCam Script	{
 ROUTE KS.keyDown TO RotateCam.KeyPressed
 ROUTE RotateCam.Orientation TO camera.rotation
 
-ROUTE KS.keyDown TO BallMove.KP
-ROUTE BallMove.Movement TO Balle.translation
+#ROUTE KS.keyDown TO BallMove.KP
+#ROUTE BallMove.Movement TO Balle.translation
 
-ROUTE KS.keyDown TO CamMove.KP
-ROUTE CamMove.Movement TO camera.translation
+#ROUTE KS.keyDown TO CamMove.KP
+#ROUTE CamMove.Movement TO camera.translation
