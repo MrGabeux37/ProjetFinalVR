@@ -1,11 +1,14 @@
 #VRML V2.0 utf8
 
-Viewpoint{
-  fieldOfView 0.785392
-  position -6.0 -3.5 3.0
-  jump FALSE
-  orientation 0 1.0 0 0.0
-  description "Balle"
+DEF cam Transform{
+  center -6.0 -4.2 0
+  children Viewpoint{
+    fieldOfView 0.785392
+    position -6.0 -3.5 3.0
+    jump FALSE
+    orientation 0 1.0 0 0.0
+    description "Balle"
+  }
 }
 
 
@@ -21,3 +24,36 @@ DEF Balle Transform{
   translation -6.0 -4.2 0
   children Inline{url["golfball.wrl"]}
 }
+
+DEF	KS KbdSensor{ isActive TRUE }
+
+
+DEF	SCR Script	{
+    eventIn	SFInt32	kd    # kd = key down
+	eventOut SFRotation	Orientation
+
+	field SFFloat angle 0	   # Angle de rotation (rad), 0 étant orienté vers la droite de l'écran
+
+
+    url ["javascript:
+
+	function kd(v, t){
+			if (v == 65601)	// Touche 'a'  --> tourne dans le sens anti-horaire
+			{ angle = angle + 0.02; }
+
+			if (v == 65604)	// Touche 'd'  --> tourne dans le sens horaire
+			{ angle = angle - 0.02; }
+
+			Orientation[0] = 0;
+			Orientation[1] = 1;
+			Orientation[2] = 0;
+			Orientation[3] = angle;
+		}
+
+
+	"]	# Fin du corps du script
+}
+
+
+ROUTE KS.keyDown TO SCR.kd
+ROUTE SCR.Orientation TO cam.rotation  #	Orientation de la boîte
