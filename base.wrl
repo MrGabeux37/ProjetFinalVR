@@ -1,0 +1,170 @@
+#VRML V2.0 utf8
+
+#caméra suivant la balle
+DEF camera Transform{
+  center -6.0 -4.2 0 #centre de rotation de la caméra
+  children DEF camcam Viewpoint{
+    fieldOfView 0.785392
+    position -6.0 -3.5 3.0
+    jump FALSE
+    orientation 0.0 1.0 0.0 0.0
+    description "Balle"
+  }
+}
+
+
+#terrain noel
+DEF Noel Transform{
+  translation 10.0 0 -6.0
+  rotation 0 1 0 1.57
+  children Inline {url["SnowHole.wrl"]}
+}
+
+#balle de golf
+DEF Balle Transform{
+  translation -6.0 -4.2 0
+  children Inline{url["golfball.wrl"]}
+}
+
+#marche pas encore !!
+#Ne doit pas fonctionner avec le script mis en bas
+DEF Horloge TimeSensor{
+  cycleInterval 12
+}
+
+DEF	KS KbdSensor{ isActive TRUE }
+
+DEF BougeBalle PositionInterpolator{
+  key[0]
+  keyValue[
+    0 0 0
+  ]
+}
+DEF BougeCam  PositionInterpolator{
+  key[0]
+  keyValue[
+    0 0 0
+  ]
+}
+
+DEF RotationBalle OrientationInterpolator{
+  key[0 1]
+  keyValue[
+    1 0 0 0
+    1 0 0 6.27
+  ]
+}
+
+DEF	script Script	{
+  directOutput TRUE
+  eventIn	SFInt32	KeyPressed
+	eventOut SFRotation	OrientationCam
+  eventOut SFVec3f  MoveBalle
+  eventOut SFVec3f  MoveCamera
+  eventOut SFTime TimeToStart
+  field SFNode GoBalle USE BougeBalle
+  field SFNode GoCam USE BougeCam #interpolatore de la cam
+  field SFNode CameraPos USE camera #objet transform camera
+	field SFNode Camera USE camcam  # objet viewpoint camera
+  field SFNode GolfBall USE Balle # objet balle
+  field SFFloat angleCam 0
+  field SFFloat CamPosX 0
+  field SFFloat CamPosY 0
+  field SFFloat CamPosZ 0
+  field SFFloat CamPosBeforeX 0
+  field SFFloat CamPosBeforeY 0
+  field SFFloat CamPosBeforeZ 0
+  field SFFloat balleX 0
+  field SFFloat balleY 0
+  field SFFloat balleZ 0
+  field SFFloat balleXBefore 0
+  field SFFloat balleYBefore 0
+  field SFFloat balleZBefore 0
+  field SFFloat distanceBalle 0
+  field SFFloat fractionTemps 0
+
+    url ["javascript:
+
+  angleCam = Camera.orientation[3]
+  balleX = GolfBall.translation.x
+  balleY = GolfBall.translation.y
+  balleZ = GolfBall.translation.z
+  balleXBefore = GolfBall.translation.x
+  balleYBefore = GolfBall.translation.y
+  balleZBefore = GolfBall.translation.z
+  CamPosX = CameraPos.translation.x
+  CamPosY = CameraPos.translation.y
+  CamPosZ = CameraPos.translation.z
+  CamPosBeforeX = CameraPos.translation.x
+  CamPosBeforeY = CameraPos.translation.y
+  CamPosBeforeZ = CameraPos.translation.z
+
+	function KeyPressed(v, t){
+      // Touche 'a'
+      // tourne dans le sens horaire
+      if (v == 65601)
+			{ angleCam = angleCam + 0.02; }
+
+      // Touche 'd'
+      // tourne la caméra dans le sens anti-horaire
+			if (v == 65604)
+			{ angleCam = angleCam - 0.02; }
+
+      //Touche 'w'
+      // build up de la force (augmente la distance que la balle va parcourir)
+      if (v == 65623){
+        distanceBalle = distanceBalle + 0.25
+      }
+
+      //Touche 'enter'
+      // fait avancer la balle et la camera
+      if (v == 65549){
+        balleX -= (Math.sin(angleCam)*distanceBalle)
+        //balleY =
+        balleZ -= (Math.cos(angleCam)*distanceBalle)
+
+        CamPosX -= (Math.sin(angleCam)*distanceBalle)
+        //CamPosY =
+        CamPosZ -= (Math.cos(angleCam)*distanceBalle)
+        while(distanceBalle>0.05){
+
+          MoveBalle[0] =  balleX
+          MoveBalle[1] =  balleY
+          MoveBalle[2] =  balleZ
+          GoBalle.keyValue[GoBalle.keyValue.length] = MoveBalle
+
+          MoveCamera[0] = CamPosX
+          MoveCamera[1] = CamPosY
+          MoveCamera[2] = CamPosZ
+          GoCam.keyValue[GoCam.keyValue.length] = MoveCamera
+
+          GoBalle.key[GoBalle.keyValue.length]=fractionTemps
+          GoCam.key[GoCam.keyValue.length]=fractionTemps
+
+          distanceBalle *= 0.5
+          fractionTemps *= 0.5
+        }
+        TimeToStart = t
+      }
+
+		  OrientationCam[0] = 0;
+			OrientationCam[1] = 1; //rotation sur l'axe y
+			OrientationCam[2] = 0;
+			OrientationCam[3] = angleCam;
+	}
+
+
+
+	"]	# Fin du corps du script
+}
+
+#entre dans le script quand on pèse une touche
+ROUTE KS.keyDown TO script.KeyPressed
+#rotation de la caméra autour de la balle
+ROUTE script.OrientationCam TO camera.rotation
+#avancement de la balle et Camera
+ROUTE script.TimeToStart TO Horloge.startTime
+ROUTE Horloge.fraction_changed TO BougeBalle.set_fraction
+ROUTE BougeBalle.value_changed TO Balle.set_translation
+ROUTE Horloge.fraction_changed TO BougeCam.set_fraction
+ROUTE BougeCam.value_changed TO camera.set_translation
