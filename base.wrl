@@ -33,16 +33,29 @@ DEF Horloge TimeSensor{
 
 DEF	KS KbdSensor{ isActive TRUE }
 
-DEF	RotateCam Script	{
+DEF	script Script	{
+  directOutput TRUE
   eventIn	SFInt32	KeyPressed
 	eventOut SFRotation	OrientationCam
   eventOut SFVec3f  MoveBalle
-	field SFNode Camera USE camcam  # objet camera
+  eventOut SFVec3f  MoveCamera
+  field SFNode CameraPos USE camera #objet transform camera
+	field SFNode Camera USE camcam  # objet viewpoint camera
   field SFNode GolfBall USE Balle # objet balle
   field SFFloat angleCam 0
+  field SFFloat CamPosX 0
+  field SFFloat CamPosY 0
+  field SFFloat CamPosZ 0
+  field SFFloat CamPosBeforeX 0
+  field SFFloat CamPosBeforeY 0
+  field SFFloat CamPosBeforeZ 0
   field SFFloat balleX 0
   field SFFloat balleY 0
   field SFFloat balleZ 0
+  field SFFloat balleXBefore 0
+  field SFFloat balleYBefore 0
+  field SFFloat balleZBefore 0
+  field SFFloat distanceBalle 0
 
     url ["javascript:
 
@@ -50,6 +63,15 @@ DEF	RotateCam Script	{
   balleX = GolfBall.translation.x
   balleY = GolfBall.translation.y
   balleZ = GolfBall.translation.z
+  balleXBefore = GolfBall.translation.x
+  balleYBefore = GolfBall.translation.y
+  balleZBefore = GolfBall.translation.z
+  CamPosX = CameraPos.translation.x
+  CamPosY = CameraPos.translation.y
+  CamPosZ = CameraPos.translation.z
+  CamPosBeforeX = CameraPos.translation.x
+  CamPosBeforeY = CameraPos.translation.y
+  CamPosBeforeZ = CameraPos.translation.z
 
 	function KeyPressed(v, t){
       // Touche 'a'
@@ -62,21 +84,63 @@ DEF	RotateCam Script	{
 			if (v == 65604)
 			{ angleCam = angleCam + 0.02; }
 
-      //Touche 'space'
+      //Touche 'w'
       // build up de la force (augmente la distance que la balle va parcourir)
-      if (v == 65568){
+      if (v == 65623){
+        distanceBalle = distanceBalle + 5
+        if(0 <= angleCam >= 1.57 ){
+          balleX += (Math.sin(angleCam)*distanceBalle)
+          //balleY =
+          balleZ -= (Math.cos(angleCam)*distanceBalle)
 
+          CamPosX += (Math.sin(angleCam)*distanceBalle)
+          //CamPosY =
+          CamPosZ -= (Math.cos(angleCam)*distanceBalle)
+        }
+        else if(1.57 < angleCam >= 3.14){
+          balleX += (Math.sin(1.57-angleCam)*distanceBalle)
+          //balleY =
+          balleZ += (Math.cos(1.57-angleCam)*distanceBalle)
 
+          CamPosX += (Math.sin(1.57-angleCam)*distanceBalle)
+          //CamPosY =
+          CamPosZ += (Math.cos(1.57-angleCam)*distanceBalle)
+        }
+        else if(3.14 < angleCam >= 4.71 ){
+          balleX -= (Math.sin(3.14-angleCam)*distanceBalle)
+          //balleY =
+          balleZ += (Math.cos(3.14- ngleCam)*distanceBalle)
+
+          CamPosX -= (Math.sin(3.14-angleCam)*distanceBalle)
+          //CamPosY =
+          CamPosZ += (Math.cos(3.14-angleCam)*distanceBalle)
+        }
+        else if(4.71 < angleCam >= 6.28){
+          balleX -= (4.71-Math.sin(4.71-angleCam)*distanceBalle)
+          //balleY =
+          balleZ -= (4.71-Math.cos(4.71-angleCam)*distanceBalle)
+
+          CamPosX -= (4.71-Math.sin(4.71-angleCam)*distanceBalle)
+          //CamPosY =
+          CamPosZ -= (4.71-Math.cos(4.71-angleCam)*distanceBalle)
+        }
+      }
+
+      //Touche 'enter'
+      // fait avancer la balle et la camera
+      if (v == 65549){
+        MoveBalle[0] =  balleX
+        MoveBalle[1] =  balleY
+        MoveBalle[2] =  balleZ
+        MoveCamera[0] = CamPosX
+        MoveCamera[1] = CamPosY
+        MoveCamera[2] = CamPosZ
       }
 
 		  OrientationCam[0] = 0;
 			OrientationCam[1] = 1; //rotation sur l'axe y
 			OrientationCam[2] = 0;
 			OrientationCam[3] = angleCam;
-
-      MoveBalle[0] =  balleX
-      MoveBalle[1] =
-      MoveBalle[2] =
 	}
 
 
@@ -85,7 +149,9 @@ DEF	RotateCam Script	{
 }
 
 #entre dans le script quand on pèse une touche
-ROUTE KS.keyDown TO RotateCam.KeyPressed
+ROUTE KS.keyDown TO script.KeyPressed
 #rotation de la caméra autour de la balle
-ROUTE RotateCam.OrientationCam TO camera.rotation
-#avancement de la balle
+ROUTE script.OrientationCam TO camera.rotation
+#avancement de la balle et Camera
+ROUTE script.MoveBalle TO Balle.translation
+ROUTE script.MoveCamera TO camera.translation
