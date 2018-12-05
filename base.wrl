@@ -26,8 +26,10 @@ DEF Balle Transform{
   children Inline{url["golfball.wrl"]}
 }
 
+#marche pas encore !!
+#Ne doit pas fonctionner avec le script mis en bas
 DEF Horloge TimeSensor{
-  cycleInterval 230000
+  cycleInterval 0
   startTime 0
 }
 
@@ -61,7 +63,7 @@ DEF	script Script	{
   eventOut SFVec3f  MoveBalle
   eventOut SFVec3f  MoveCamera
   eventOut SFTime TimeToStart
-  field SFNode GoBalle USE BougeBalle 
+  field SFNode GoBalle USE BougeBalle
   field SFNode GoCam USE BougeCam #interpolatore de la cam
   field SFNode CameraPos USE camera #objet transform camera
 	field SFNode Camera USE camcam  # objet viewpoint camera
@@ -81,8 +83,6 @@ DEF	script Script	{
   field SFFloat balleZBefore 0
   field SFFloat distanceBalle 0
   field SFFloat fractionTemps 0
-  field SFFloat nombre 0
-  field SFBool enterPressed FALSE
 
     url ["javascript:
 
@@ -114,8 +114,12 @@ DEF	script Script	{
       //Touche 'w'
       // build up de la force (augmente la distance que la balle va parcourir)
       if (v == 65623){
-        distanceBalle = distanceBalle + 1
+        distanceBalle = distanceBalle + 0.25
+      }
 
+      //Touche 'enter'
+      // fait avancer la balle et la camera
+      if (v == 65549){
         balleX -= (Math.sin(angleCam)*distanceBalle)
         //balleY =
         balleZ -= (Math.cos(angleCam)*distanceBalle)
@@ -123,11 +127,6 @@ DEF	script Script	{
         CamPosX -= (Math.sin(angleCam)*distanceBalle)
         //CamPosY =
         CamPosZ -= (Math.cos(angleCam)*distanceBalle)
-      }
-
-      //Touche 'enter'
-      // fait avancer la balle et la camera
-      if (v == 65549){
         while(distanceBalle>0.05){
 
           MoveBalle[0] =  balleX
@@ -145,10 +144,7 @@ DEF	script Script	{
 
           distanceBalle *= 0.5
           fractionTemps *= 0.5
-          nombre++
-          enterPressed = TRUE
         }
-        enterPressed = FALSE
         TimeToStart = t
       }
 
@@ -173,5 +169,3 @@ ROUTE Horloge.fraction_changed TO BougeBalle.set_fraction
 ROUTE BougeBalle.value_changed TO Balle.set_translation
 ROUTE Horloge.fraction_changed TO BougeCam.set_fraction
 ROUTE BougeCam.value_changed TO camera.set_translation
-#ROUTE script.MoveBalle TO Balle.translation
-#ROUTE script.MoveCamera TO camera.translation
