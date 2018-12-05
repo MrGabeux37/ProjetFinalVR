@@ -7,7 +7,7 @@ DEF camera Transform{
     fieldOfView 0.785392
     position -6.0 -3.5 3.0
     jump FALSE
-    orientation 0 1.0 0 0.0
+    orientation 0.0 1.0 0.0 0.0
     description "Balle"
   }
 }
@@ -87,42 +87,18 @@ DEF	script Script	{
       //Touche 'w'
       // build up de la force (augmente la distance que la balle va parcourir)
       if (v == 65623){
-        distanceBalle = distanceBalle + 5
-        if(0 <= angleCam >= 1.57 ){
-          balleX += (Math.sin(angleCam)*distanceBalle)
+        distanceBalle = distanceBalle + 1
+        while(distanceBalle>0.05){
+
+          balleX -= (Math.sin(angleCam)*distanceBalle)
           //balleY =
           balleZ -= (Math.cos(angleCam)*distanceBalle)
 
-          CamPosX += (Math.sin(angleCam)*distanceBalle)
+          CamPosX -= (Math.sin(angleCam)*distanceBalle)
           //CamPosY =
           CamPosZ -= (Math.cos(angleCam)*distanceBalle)
-        }
-        else if(1.57 < angleCam >= 3.14){
-          balleX += (Math.sin(1.57-angleCam)*distanceBalle)
-          //balleY =
-          balleZ += (Math.cos(1.57-angleCam)*distanceBalle)
 
-          CamPosX += (Math.sin(1.57-angleCam)*distanceBalle)
-          //CamPosY =
-          CamPosZ += (Math.cos(1.57-angleCam)*distanceBalle)
-        }
-        else if(3.14 < angleCam >= 4.71 ){
-          balleX -= (Math.sin(3.14-angleCam)*distanceBalle)
-          //balleY =
-          balleZ += (Math.cos(3.14- ngleCam)*distanceBalle)
-
-          CamPosX -= (Math.sin(3.14-angleCam)*distanceBalle)
-          //CamPosY =
-          CamPosZ += (Math.cos(3.14-angleCam)*distanceBalle)
-        }
-        else if(4.71 < angleCam >= 6.28){
-          balleX -= (4.71-Math.sin(4.71-angleCam)*distanceBalle)
-          //balleY =
-          balleZ -= (4.71-Math.cos(4.71-angleCam)*distanceBalle)
-
-          CamPosX -= (4.71-Math.sin(4.71-angleCam)*distanceBalle)
-          //CamPosY =
-          CamPosZ -= (4.71-Math.cos(4.71-angleCam)*distanceBalle)
+          distanceBalle -= distanceBalle*0.5
         }
       }
 
