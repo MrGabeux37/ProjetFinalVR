@@ -1,0 +1,41 @@
+#VRML V2.0 utf8
+
+Background{
+  skyColor
+  [
+    0.0 0.4 1.0,
+    0.0 0.4 1.0,
+    1.0 1.0 1.0
+  ]
+  skyAngle [1.2, 1.571]
+
+  groundColor
+  [
+    0.1 0.3 0.95,
+    0.1 0.3 0.95,
+    0.0 0.2 0.95,
+  ]
+  groundAngle [ 1.2, 1.571 ]
+}
+
+Transform
+{
+  rotation 0 1 0 -1.57
+  children
+  [
+    Inline
+    {
+      url ["Montagne.wrl"]
+    }
+
+    Inline
+    {
+      url ["tour.wrl"]
+    }
+
+    Inline
+    {
+      url ["rubbery surface.wrl"]
+    }
+  ]
+}
