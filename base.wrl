@@ -29,8 +29,7 @@ DEF Balle Transform{
 #marche pas encore !!
 #Ne doit pas fonctionner avec le script mis en bas
 DEF Horloge TimeSensor{
-  cycleInterval 0
-  startTime 0
+  cycleInterval 12
 }
 
 DEF	KS KbdSensor{ isActive TRUE }
