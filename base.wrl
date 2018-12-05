@@ -3,7 +3,7 @@
 #caméra suivant la balle
 DEF camera Transform{
   center -6.0 -4.2 0 #centre de rotation de la caméra
-  children Viewpoint{
+  children DEF camcam Viewpoint{
     fieldOfView 0.785392
     position -6.0 -3.5 3.0
     jump FALSE
@@ -26,38 +26,66 @@ DEF Balle Transform{
   children Inline{url["golfball.wrl"]}
 }
 
+DEF Horloge TimeSensor{
+  cycleInterval 1.5
+  startTime 0
+}
+
 DEF	KS KbdSensor{ isActive TRUE }
 
 DEF	RotateCam Script	{
   eventIn	SFInt32	KeyPressed
-	eventOut SFRotation	Orientation
-	field SFFloat angle 0	   # Angle de rotation
+	eventOut SFRotation	OrientationCam
+  eventOut SFVec3f  MoveBalle
+	field SFNode Camera USE camcam  # objet camera
+  field SFNode GolfBall USE Balle # objet balle
+  field SFFloat angleCam 0
+  field SFFloat balleX 0
+  field SFFloat balleY 0
+  field SFFloat balleZ 0
 
     url ["javascript:
 
+  angleCam = Camera.orientation[3]
+  balleX = GolfBall.translation.x
+  balleY = GolfBall.translation.y
+  balleZ = GolfBall.translation.z
+
 	function KeyPressed(v, t){
-			if (v == 65601)	// Touche 'a'  --> tourne dans le sens anti-horaire
-			{ angle = angle - 0.02; }
+      // Touche 'a'
+      // tourne dans le sens horaire
+      if (v == 65601)
+			{ angleCam = angleCam - 0.02; }
 
-			if (v == 65604)	// Touche 'd'  --> tourne dans le sens horaire
-			{ angle = angle + 0.02; }
+      // Touche 'd'
+      // tourne la caméra dans le sens anti-horaire
+			if (v == 65604)
+			{ angleCam = angleCam + 0.02; }
 
-			Orientation[0] = 0;
-			Orientation[1] = 1; //rotation sur l'axe y
-			Orientation[2] = 0;
-			Orientation[3] = angle;
-		}
+      //Touche 'space'
+      // build up de la force (augmente la distance que la balle va parcourir)
+      if (v == 65568){
+
+
+      }
+
+		  OrientationCam[0] = 0;
+			OrientationCam[1] = 1; //rotation sur l'axe y
+			OrientationCam[2] = 0;
+			OrientationCam[3] = angleCam;
+
+      MoveBalle[0] =  balleX
+      MoveBalle[1] =
+      MoveBalle[2] =
+	}
+
 
 
 	"]	# Fin du corps du script
 }
 
-#rotation de la caméra autour de la balle
+#entre dans le script quand on pèse une touche
 ROUTE KS.keyDown TO RotateCam.KeyPressed
-ROUTE RotateCam.Orientation TO camera.rotation
-
-#ROUTE KS.keyDown TO BallMove.KP
-#ROUTE BallMove.Movement TO Balle.translation
-
-#ROUTE KS.keyDown TO CamMove.KP
-#ROUTE CamMove.Movement TO camera.translation
+#rotation de la caméra autour de la balle
+ROUTE RotateCam.OrientationCam TO camera.rotation
+#avancement de la balle
