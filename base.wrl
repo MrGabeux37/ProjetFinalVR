@@ -61,8 +61,8 @@ DEF	script Script	{
   eventOut SFVec3f  MoveBalle
   eventOut SFVec3f  MoveCamera
   eventOut SFTime TimeToStart
-  field SFNode GoBalle USE BougeBalle
-  field SFNode GoCam USE BougeCam
+  field SFNode GoBalle USE BougeBalle 
+  field SFNode GoCam USE BougeCam #interpolatore de la cam
   field SFNode CameraPos USE camera #objet transform camera
 	field SFNode Camera USE camcam  # objet viewpoint camera
   field SFNode GolfBall USE Balle # objet balle
@@ -133,15 +133,15 @@ DEF	script Script	{
           MoveBalle[0] =  balleX
           MoveBalle[1] =  balleY
           MoveBalle[2] =  balleZ
-          GoBalle.keyValue[nombre] = MoveBalle
+          GoBalle.keyValue[GoBalle.keyValue.length] = MoveBalle
 
           MoveCamera[0] = CamPosX
           MoveCamera[1] = CamPosY
           MoveCamera[2] = CamPosZ
-          GoCam.keyValue[nombre] = MoveCamera
+          GoCam.keyValue[GoCam.keyValue.length] = MoveCamera
 
-          GoBalle.key[nombre]=fractionTemps
-          GoCam.key[nombre]=fractionTemps
+          GoBalle.key[GoBalle.keyValue.length]=fractionTemps
+          GoCam.key[GoCam.keyValue.length]=fractionTemps
 
           distanceBalle *= 0.5
           fractionTemps *= 0.5
