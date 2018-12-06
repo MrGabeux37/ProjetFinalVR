@@ -20,6 +20,13 @@ DEF Noel Transform{
   children Inline {url["SnowHole.wrl"]}
 }
 
+DEF Lune Transform{
+  translation 14.35 -3.25 -9.75
+  rotation 0 0 0 0
+  scale 1 1 1
+  children Inline {url["TerrainLune.wrl"]}
+}
+
 #balle de golf
 DEF Balle Transform{
   translation -6.0 -4.2 0
