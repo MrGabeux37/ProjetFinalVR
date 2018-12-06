@@ -37,7 +37,6 @@ DEF Lune Transform{
   children Inline {url["TerrainLune.wrl"]}
 }
 
-
 #balle de golf
 DEF Balle Transform{
   #translation -6.0 -4.2 0
