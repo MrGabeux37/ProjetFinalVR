@@ -576,6 +576,9 @@ DEF plancher Shape {
 	appearance Appearance {
 		material Material { diffuseColor 1.0 1.0 1.0 }
 		texture ImageTexture { url "snow.jpg" }
+		textureTransform TextureTransform{
+			scale 4.0 4.0
+		}
 	}
 	geometry IndexedFaceSet {
 		coord Coordinate {
