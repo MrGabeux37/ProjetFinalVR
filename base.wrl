@@ -5,13 +5,23 @@ DEF camera Transform{
   center -6.0 -4.2 0 #centre de rotation de la caméra
   children DEF camcam Viewpoint{
     fieldOfView 0.785392
-    position -6.0 -3.5 3.0
+    position 0.0 0.0 0.0 #-6.0 -3.5 3.0
     jump FALSE
     orientation 0.0 1.0 0.0 0.0
     description "Balle"
   }
 }
 
+DEF BoutonTerrain1 Transform{
+  translation -1.0 0 -5.0
+  children [
+  Shape{
+  appearance Appearance{ material Material{ diffuseColor 1.0 0 0}}
+  geometry Box {size 0.5 0.5 0.5}
+},
+  DEF terrain1 TouchSensor{}
+]
+}
 
 #terrain noel
 DEF Noel Transform{
@@ -29,27 +39,53 @@ DEF Lune Transform{
 
 #balle de golf
 DEF Balle Transform{
-  translation -6.0 -4.2 0
+  #translation -6.0 -4.2 0
   children Inline{url["golfball.wrl"]}
 }
 
 #marche pas encore !!
 #Ne doit pas fonctionner avec le script mis en bas
 DEF Horloge TimeSensor{
-  cycleInterval 12
+  cycleInterval 1
   startTime 0
+}
+
+DEF ChoiceTimer TimeSensor{
+  enabled FALSE
+  loop FALSE
+  cycleInterval 0.02
 }
 
 DEF	KS KbdSensor{ isActive TRUE }
 
+DEF ChoiceTerrain1 Script {
+	eventIn		SFBool	Choix
+	eventOut	SFVec3f	PosBalle
+  eventOut	SFVec3f	PosCam
+
+	url       "javascript:
+	function Choix(value, time) {
+ 		 if(value){
+       PosBalle[0] = -6.0
+       PosBalle[1] = -4.2
+       PosBalle[2] = 0
+
+       PosCam[0] = -6.0
+       PosCam[1] = -3.5
+       PosCam[2] = 3.0
+     }
+	}
+	"
+}
+
 DEF	script Script	{
-  directOutput TRUE
   eventIn	SFInt32	KeyPressed
   eventIn SFFloat set_fraction
 	eventOut SFRotation	OrientationCam
   eventOut SFVec3f  value_changedBalle
   eventOut SFVec3f  value_changedCam
   eventOut SFTime TimeToStart
+  eventOut SFFloat cycleInterval
   field SFNode CameraPos USE camera #objet transform camera
 	field SFNode Camera USE camcam  # objet viewpoint camera
   field SFNode GolfBall USE Balle # objet balle
@@ -59,24 +95,22 @@ DEF	script Script	{
   field SFFloat CamPosX 0
   field SFFloat CamPosY 0
   field SFFloat CamPosZ 0
-  field SFFloat CamPosXAvant 0
-  field SFFloat CamPosYAvant 0
-  field SFFloat CamPosZAvant 0
 
   field SFFloat balleX 0
   field SFFloat balleY 0
   field SFFloat balleZ 0
-  field SFFloat balleXAvant 0
-  field SFFloat balleYAvant 0
-  field SFFloat balleZAvant 0
 
   field SFFloat distanceBalle 0
 
     url ["javascript:
 
   angleCam = Camera.orientation[3]
+  balleX = GolfBall.translation.x
   balleY = GolfBall.translation.y
+  balleZ = GolfBall.translation.z
+  CamPosX = CameraPos.translation.x
   CamPosY = CameraPos.translation.y
+  CamPosZ = CameraPos.translation.z
 
 	function KeyPressed(v, t){
       // Touche 'a' ou fleche gauche
@@ -92,22 +126,22 @@ DEF	script Script	{
       //Touche 'w' ou fleche haut
       // build up de la force (augmente la distance que la balle va parcourir)
       if (v == 65623 || v == 65574){
-        if(multiplicateur<6.0){
-          multiplicateur+=1
+        if(multiplicateur < 6.0){
+          multiplicateur += 0.5
         }
         if(multiplicateur>=6.0){
           multiplicateur = 6.0
         }
-        distanceBalle = distanceBalle + 0.25*multiplicateur
+        distanceBalle = distanceBalle + 0.5*multiplicateur
       }
       //Touche 's' ou fleche bas
       //Reset la force du tir et multiplicateur
       if (v == 65552 || v == 65576){
-        distanceBalle=0
-        multiplicateur=0
+        distanceBalle = 0
+        multiplicateur = 0
       }
       //Touche 'enter'
-      // calcul distance en X et Z de la balle selon l<angle de la caméra
+      // calcul distance en X et Z de la balle selon l'angle de la caméra
       if (v == 65549){
 
         balleX = GolfBall.translation.x - (Math.sin(angleCam) * distanceBalle)
@@ -116,8 +150,16 @@ DEF	script Script	{
         CamPosX = CameraPos.translation.x - (Math.sin(angleCam) * distanceBalle)
         CamPosZ = CameraPos.translation.z - (Math.cos(angleCam) * distanceBalle)
 
-        distanceBalle=0
+        value_changedBalle[0]=balleX*fraction
+        value_changedBalle[1]=balleY*fraction
+        value_changedBalle[2]=balleZ*fraction
+
+        value_changedCam[0]=CamPosX*fraction
+        value_changedCam[1]=CamPosY*fraction
+        value_changedCam[2]=CamPosZ*fraction
+
         TimeToStart=t
+        distanceBalle=0
         multiplicateur=0
       }
 
@@ -129,19 +171,22 @@ DEF	script Script	{
 
   function set_fraction(fraction, temps){
 
-    value_changedBalle[0]=balleX
-    value_changedBalle[1]=balleY
-    value_changedBalle[2]=balleZ
+    value_changedBalle[0]=balleX*fraction
+    value_changedBalle[1]=balleY*fraction
+    value_changedBalle[2]=balleZ*fraction
 
-    value_changedCam[0]=CamPosX
-    value_changedCam[1]=CamPosY
-    value_changedCam[2]=CamPosZ
+    value_changedCam[0]=CamPosX*fraction
+    value_changedCam[1]=CamPosY*fraction
+    value_changedCam[2]=CamPosZ*fraction
 
   }
 	"]	# Fin du corps du script
 }
 
-
+ROUTE terrain1.isActive TO ChoiceTimer.enabled
+ROUTE ChoiceTimer.enabled TO ChoiceTerrain1.Choix
+ROUTE ChoiceTerrain1.PosBalle TO Balle.set_translation
+ROUTE ChoiceTerrain1.PosCam TO camcam.set_position
 #entre dans le script quand on pèse une touche
 ROUTE KS.keyDown TO script.KeyPressed
 #rotation de la caméra autour de la balle
