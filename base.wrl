@@ -37,6 +37,7 @@ DEF Balle Transform{
 #Ne doit pas fonctionner avec le script mis en bas
 DEF Horloge TimeSensor{
   cycleInterval 12
+  startTime 0
 }
 
 DEF	KS KbdSensor{ isActive TRUE }
@@ -52,15 +53,23 @@ DEF	script Script	{
   field SFNode CameraPos USE camera #objet transform camera
 	field SFNode Camera USE camcam  # objet viewpoint camera
   field SFNode GolfBall USE Balle # objet balle
+  field SFFloat multiplicateur 0
   field SFFloat angleCam 0
 
   field SFFloat CamPosX 0
   field SFFloat CamPosY 0
   field SFFloat CamPosZ 0
+  field SFFloat CamPosXAvant 0
+  field SFFloat CamPosYAvant 0
+  field SFFloat CamPosZAvant 0
 
   field SFFloat balleX 0
   field SFFloat balleY 0
   field SFFloat balleZ 0
+  field SFFloat balleXAvant 0
+  field SFFloat balleYAvant 0
+  field SFFloat balleZAvant 0
+
   field SFFloat distanceBalle 0
 
     url ["javascript:
@@ -70,22 +79,33 @@ DEF	script Script	{
   CamPosY = CameraPos.translation.y
 
 	function KeyPressed(v, t){
-      // Touche 'a'
+      // Touche 'a' ou fleche gauche
       // tourne dans le sens horaire
-      if (v == 65601)
+      if (v == 65601 || v == 65573)
 			{ angleCam = angleCam + 0.02; }
 
-      // Touche 'd'
+      // Touche 'd' ou fleche droite
       // tourne la caméra dans le sens anti-horaire
-			if (v == 65604)
+			if (v == 65604 || v == 65575)
 			{ angleCam = angleCam - 0.02; }
 
-      //Touche 'w'
+      //Touche 'w' ou fleche haut
       // build up de la force (augmente la distance que la balle va parcourir)
-      if (v == 65623){
-        distanceBalle = distanceBalle + 0.25
+      if (v == 65623 || v == 65574){
+        if(multiplicateur<6.0){
+          multiplicateur+=1
+        }
+        if(multiplicateur>=6.0){
+          multiplicateur = 6.0
+        }
+        distanceBalle = distanceBalle + 0.25*multiplicateur
       }
-
+      //Touche 's' ou fleche bas
+      //Reset la force du tir et multiplicateur
+      if (v == 65552 || v == 65576){
+        distanceBalle=0
+        multiplicateur=0
+      }
       //Touche 'enter'
       // calcul distance en X et Z de la balle selon l<angle de la caméra
       if (v == 65549){
@@ -98,6 +118,7 @@ DEF	script Script	{
 
         distanceBalle=0
         TimeToStart=t
+        multiplicateur=0
       }
 
 		  OrientationCam[0] = 0;
@@ -107,6 +128,7 @@ DEF	script Script	{
 	}
 
   function set_fraction(fraction, temps){
+
     value_changedBalle[0]=balleX
     value_changedBalle[1]=balleY
     value_changedBalle[2]=balleZ
