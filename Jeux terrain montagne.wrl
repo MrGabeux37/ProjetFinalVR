@@ -18,6 +18,7 @@ DEF camera Transform{
   }
 }
 
+#Senseur de temps pour l'animation de la balle et la caméra
 DEF Horloge TimeSensor{
   cycleInterval 1
   startTime 0
@@ -37,6 +38,7 @@ DEF Balle Transform{
   children Inline{url["golfball.wrl"]}
 }
 
+#Son du putter lorsque l'on frappe la balle
 DEF PutterSound Sound{
   intensity 2
   source DEF sonPutter AudioClip{
@@ -49,9 +51,11 @@ DEF PutterSound Sound{
   maxFront 100.0
   maxBack  100.0
 }
-
+#Senseur pour les touches du clavier
 DEF	KS KbdSensor{ isActive TRUE }
 
+#Script des mouvement de la balle
+#Le nom des variables s'auto-représente
 DEF	script Script	{
   eventIn	SFInt32	KeyPressed
   eventIn SFFloat set_fraction
@@ -65,22 +69,16 @@ DEF	script Script	{
   field SFNode GolfBall USE Balle # objet balle
   field SFFloat multiplicateur 0
   field SFFloat angleCam 0
-
   field SFFloat CamPosX 0
   field SFFloat CamPosY 0
   field SFFloat CamPosZ 0
-
   field SFFloat balleX 0
   field SFFloat balleY 0
   field SFFloat balleZ 0
-
   field SFFloat distanceBalle 0
 
     url ["javascript:
 
-  /*GolfBall.translation.x=-6.0
-  GolfBall.translation.y=-4.2
-  GolfBall.translation.z=0*/
   angleCam = Camera.orientation[3]
   balleX = GolfBall.translation.x
   balleY = GolfBall.translation.y
@@ -90,13 +88,13 @@ DEF	script Script	{
   CamPosZ = CameraPos.translation.z
 
 	function KeyPressed(v, t){
-      // Touche 'a' ou fleche gauche
-      // tourne dans le sens horaire
+    // Touche 'a' ou fleche gauche
+    // tourne dans le sens antihoraire en augmentant le nombre de radian de .02 par fois que la touche est appuyé
       if (v == 65601 || v == 65573)
 			{ angleCam = angleCam + 0.02; }
 
       // Touche 'd' ou fleche droite
-      // tourne la caméra dans le sens anti-horaire
+      // tourne la caméra dans le sens horaire en diminuant le nombre de radian de .02 par fois que la touche est appuyé
 			if (v == 65604 || v == 65575)
 			{ angleCam = angleCam - 0.02; }
 
@@ -118,7 +116,7 @@ DEF	script Script	{
         multiplicateur = 0
       }
       //Touche 'enter'
-      // calcul distance en X et Z de la balle selon l'angle de la caméra
+      // calcul distance en X et Z de la balle selon l'angle de la caméra avec sinus et cosinus de l'Angle de la camera
       if (v == 65549){
 
         balleX = GolfBall.translation.x - (Math.sin(angleCam) * distanceBalle)
@@ -137,7 +135,7 @@ DEF	script Script	{
 			OrientationCam[2] = 0;
 			OrientationCam[3] = angleCam;
 	}
-
+//applique la valeur avec chaque fraction de temps pour déclencher l'animation.
   function set_fraction(fraction, temps){
 
     value_changedBalle[0]=balleX
@@ -161,13 +159,15 @@ ROUTE KS.keyDown TO script.KeyPressed
 ROUTE script.OrientationCam TO camera.rotation
 
 
-#avancement de la balle et Camera
+#Active le senseur de temps
 ROUTE script.TimeToStart TO Horloge.startTime
+#active le son du putter lorsque qu'il y a un coup d'effectué
 ROUTE script.TimeToStart TO sonPutter.startTime
-
+#débute l'animation du déplaçement de la balle
 ROUTE Horloge.fraction_changed TO script.set_fraction
 ROUTE script.value_changedBalle TO Balle.set_translation
+#change la location du bruit du putter.
 ROUTE script.value_changedBalle TO PutterSound.set_location
-
+#débute l'animation du déplaçement de la balle
 ROUTE Horloge.fraction_changed TO script.set_fraction
 ROUTE script.value_changedCam TO camera.set_translation

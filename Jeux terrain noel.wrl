@@ -1,11 +1,8 @@
 #VRML V2.0 utf8
-<<<<<<< Updated upstream
 
 #Fichier wrl permettant d'implémenter le gameplay au terrain
 
-=======
 #restriction de la navigation seulement au viewpoint défini.
->>>>>>> Stashed changes
 NavigationInfo{
   type ["NONE"]
 }
@@ -174,6 +171,6 @@ ROUTE Horloge.fraction_changed TO script.set_fraction
 ROUTE script.value_changedBalle TO Balle.set_translation
 #change la location du bruit du putter.
 ROUTE script.value_changedBalle TO PutterSound.set_location
-#débute l'animation du déplaçement de la balle 
+#débute l'animation du déplaçement de la balle
 ROUTE Horloge.fraction_changed TO script.set_fraction
 ROUTE script.value_changedCam TO camera.set_translation
