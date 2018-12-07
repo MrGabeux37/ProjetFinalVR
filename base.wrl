@@ -5,8 +5,7 @@ WorldInfo{
   info[
     "Projet créé par Gabriel Lacroix, Marc-Antoine Adam et Alex Lebeau",
     "Créé le 19 Novembre 2018.",
-    "Le clic droit permet de sélectionner la vue à partir de la balle ou la vue du menu de sélection du terrain
-    En cliquant sur un des bouttons de sélection de terrain, la balle sera téléportée au départ du terrain choisi.
+    "En cliquant sur un des bouttons de sélection de terrain, la balle sera téléportée au départ du terrain choisi.
     La touche 'd' et la touche 'fleche droite' fait tourner la caméra autour de la balle dans le sens horaire.
     La touche 'a' et la touche 'fleche gauche' fait tourner la caméra autour de la balle dans le sens horaire.
     La touche 'w' et la touche 'fleche haut' fait monter la distance que la balle va parcourir(la force).

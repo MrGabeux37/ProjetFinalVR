@@ -63,22 +63,16 @@ DEF	script Script	{
   field SFNode GolfBall USE Balle # objet balle
   field SFFloat multiplicateur 0
   field SFFloat angleCam 0
-
   field SFFloat CamPosX 0
   field SFFloat CamPosY 0
   field SFFloat CamPosZ 0
-
   field SFFloat balleX 0
   field SFFloat balleY 0
   field SFFloat balleZ 0
-
   field SFFloat distanceBalle 0
 
     url ["javascript:
 
-  /*GolfBall.translation.x=-6.0
-  GolfBall.translation.y=-4.2
-  GolfBall.translation.z=0*/
   angleCam = Camera.orientation[3]
   balleX = GolfBall.translation.x
   balleY = GolfBall.translation.y
