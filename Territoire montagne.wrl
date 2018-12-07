@@ -2,6 +2,7 @@
 
 Sound
 {
+  intensity 0.8
   source AudioClip
   {
     url "Montagne.mp3"

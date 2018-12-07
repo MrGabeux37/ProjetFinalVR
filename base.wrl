@@ -1,7 +1,7 @@
 #VRML V2.0 utf8
 
 WorldInfo{
-  title "Le Méchant E.T."
+  title "Miniputt Champion"
   info[
     "Projet créé par Gabriel Lacroix, Marc-Antoine Adam et Alex Lebeau",
     "Créé le 19 Novembre 2018.",
@@ -17,6 +17,21 @@ WorldInfo{
 
 NavigationInfo{
   type ["NONE"]
+}
+
+Sound
+{
+  intensity 0.7
+  spatialize FALSE
+  source AudioClip
+  {
+    url "Menu.mp3"
+    loop TRUE
+  }
+  minFront 100.0
+  minBack  100.0
+  maxFront 10000.0
+  maxBack  10000.0
 }
 
 #arrière-plan
@@ -35,19 +50,6 @@ Background{
   groundAngle [ 1.309, 1.571 ]
 }
 
-
-#caméra suivant la balle
-DEF camera Transform{
-  center -6.0 -4.2 0 #centre de rotation de la caméra
-  children DEF camcam Viewpoint{
-    fieldOfView 0.785392
-    position 0.0 10.0 0.0 #-6.0 -3.5 3.0
-    jump TRUE
-    orientation 0.0 1.0 0.0 0.0
-    description "Balle"
-  }
-}
-
 Viewpoint{
   fieldOfView 0.785392
   position 0.0 10.0 0.0
@@ -56,12 +58,8 @@ Viewpoint{
   description "Menu"
 }
 
-Transform{
-  translation 0 10 -5.0
-  children[
-
 DEF PlaqueArriere Transform{
-  translation 0 1.1 -1.0
+  translation 0 10 -3
   children Shape{
     appearance Appearance{
       material Material{
@@ -75,394 +73,182 @@ DEF PlaqueArriere Transform{
 }
 }
 
-DEF BoutonTerrain1 Transform{
-  translation -1.0 -1.0 0
-  children [
-  Shape{
-  appearance Appearance{ material Material{ diffuseColor 1.0 0 0}}
-  geometry Box {size 0.5 0.5 0.5}
-},
-Transform{
-  translation 0 0.5 0
-children Shape{
-  appearance Appearance{ material Material{diffuseColor 1.0 0 0}}
-  geometry Text{
-    string [ "Noel" ]
-    length [0.0]
-    maxExtent 2.0
-    fontStyle FontStyle{
-      justify ["MIDDLE"]
-      family "SERIF"
-      style "BOLD"
-      size 0.25
-    }
-  }
-}
-},
-  DEF terrain1 TouchSensor{}
-]
-},
-
-DEF BoutonTerrain2 Transform{
-  translation 0 -1.0 0
-  children [
-  Shape{
-  appearance Appearance{ material Material{ diffuseColor 0 1.0 0}}
-  geometry Box {size 0.5 0.5 0.5}
-},
-  Transform{
-    translation 0 0.5 0
-  children Shape{
-    appearance Appearance{ material Material{diffuseColor 0 1.0 0}}
-    geometry Text{
-			string [ "Lune" ]
-			length [0.0]
-			maxExtent 2.0
-			fontStyle FontStyle{
-				justify ["MIDDLE"]
-				family "SERIF"
-				style "BOLD"
-				size 0.25
-			}
-		}
-  }
-},
-  DEF terrain2 TouchSensor{}
-]
-},
-
-DEF BoutonTerrain3 Transform{
-  translation 1.0 -1.00 0
-  children [
-  Shape{
-  appearance Appearance{ material Material{ diffuseColor 0 0 1.0}}
-  geometry Box {size 0.5 0.5 0.5}
-},
-Transform{
-  translation 0 0.5 0
-children Shape{
-  appearance Appearance{ material Material{diffuseColor 0 0 1}}
-  geometry Text{
-    string [ "Terrain?" ]
-    length [0.0]
-    maxExtent 2.0
-    fontStyle FontStyle{
-      justify ["MIDDLE"]
-      family "SERIF"
-      style "BOLD"
-      size 0.25
-    }
-  }
-}
-},
-  DEF terrain3 TouchSensor{}
-]
-},
-]
-}
-
-#terrain noel
-DEF Noel Transform{
-  translation 10.0 0 -6.0
-  rotation 0 1 0 1.57
-  children Inline {url["SnowHole.wrl"]}
-}
-
-DEF Lune Transform{
-  translation 14.35 -3.05 -9.75
-  rotation 0 0 0 0
-  scale 1 1 1
-  children Inline {url["TerrainLune.wrl"]}
-}
-
-#balle de golf
-DEF Balle Transform{
-  translation -6.0 -4.2 0
-  children Inline{url["golfball.wrl"]}
-}
-
-DEF Horloge TimeSensor{
-  cycleInterval 1
-  startTime 0
-}
-
-DEF ChoiceTimer1 TimeSensor{
-  enabled FALSE
-  loop FALSE
-  cycleInterval 0.02
-}
-DEF ChoiceTimer2 TimeSensor{
-  enabled FALSE
-  loop FALSE
-  cycleInterval 0.02
-}
-DEF ChoiceTimer3 TimeSensor{
-  enabled FALSE
-  loop FALSE
-  cycleInterval 0.02
-}
-
-DEF SonWinter Sound{
-  intensity 0.4
-  spatialize FALSE
-  source DEF sonHiver AudioClip{
-    url "WinterWonderland.wav"
-    loop TRUE
-    stopTime 0.00000001
-  }
-  minFront 100.0
-  minBack  100.0
-  maxFront 100.0
-  maxBack  100.0
-}
-
-DEF SonMoon Sound{
-  intensity 0.4
-  spatialize FALSE
-  source DEF sonLune AudioClip{
-    url "MoonSong.wav"
-    loop TRUE
-    stopTime 0.00000001
-  }
-  minFront 100.0
-  minBack  100.0
-  maxFront 100.0
-  maxBack  100.0
-}
-
-DEF PutterSound Sound{
-  intensity 2
-  source DEF sonPutter AudioClip{
-    url "GolfPutt.wav"
-    loop FALSE
-    stopTime 0.00000001
-  }
-  minFront 100.0
-  minBack  100.0
-  maxFront 100.0
-  maxBack  100.0
-}
-
-DEF	KS KbdSensor{ isActive TRUE }
-
-DEF ChoiceTerrain1 Script {
-	eventIn		SFBool	Choix
-	eventOut	SFVec3f	PosBalle
-  eventOut	SFVec3f	PosCam
-  eventOut  SFTime StartSong
-  eventOut  SFTime StopSong
-
-	url       "javascript:
-	function Choix(value, time) {
- 		 if(value){
-       PosBalle[0] = -6.0
-       PosBalle[1] = -4.2
-       PosBalle[2] = 0
-
-       PosCam[0] = -6.0
-       PosCam[1] = -3.5
-       PosCam[2] = 3.0
-
-       StartSong=time+ 0.000000001
-       StopSong=time
-     }
-	}
-	"
-}
-
-DEF ChoiceTerrain2 Script {
-	eventIn		SFBool	Choix
-	eventOut	SFVec3f	PosBalle
-  eventOut	SFVec3f	PosCam
-  eventOut  SFTime StartSong
-  eventOut  SFTime StopSong
-
-	url       "javascript:
-	function Choix(value, time) {
- 		 if(value){
-       PosBalle[0] = 15.0
-       PosBalle[1] = -4.2
-       PosBalle[2] = 0
-
-       PosCam[0] = 15.0
-       PosCam[1] = -3.5
-       PosCam[2] = 3.0
-
-       StartSong=time+0.000000011
-       StopSong=time+0.000000001
-     }
-	}
-	"
-}
-
-DEF ChoiceTerrain3 Script {
-	eventIn		SFBool	Choix
-	eventOut	SFVec3f	PosBalle
-  eventOut	SFVec3f	PosCam
-
-	url       "javascript:
-	function Choix(value, time) {
- 		 if(value){
-       PosBalle[0] = -6.0
-       PosBalle[1] = -4.2
-       PosBalle[2] = 0
-
-       PosCam[0] = -6.0
-       PosCam[1] = -3.5
-       PosCam[2] = 3.0
-     }
-	}
-	"
-}
-
-
-DEF	script Script	{
-  eventIn	SFInt32	KeyPressed
-  eventIn SFFloat set_fraction
-	eventOut SFRotation	OrientationCam
-  eventOut SFVec3f  value_changedBalle
-  eventOut SFVec3f  value_changedCam
-  eventOut SFTime TimeToStart
-  eventOut SFFloat cycleInterval
-  field SFNode CameraPos USE camera #objet transform camera
-	field SFNode Camera USE camcam  # objet viewpoint camera
-  field SFNode GolfBall USE Balle # objet balle
-  field SFFloat multiplicateur 0
-  field SFFloat angleCam 0
-
-  field SFFloat CamPosX 0
-  field SFFloat CamPosY 0
-  field SFFloat CamPosZ 0
-
-  field SFFloat balleX 0
-  field SFFloat balleY 0
-  field SFFloat balleZ 0
-
-  field SFFloat distanceBalle 0
-
-    url ["javascript:
-
-  /*GolfBall.translation.x=-6.0
-  GolfBall.translation.y=-4.2
-  GolfBall.translation.z=0*/
-  angleCam = Camera.orientation[3]
-  balleX = GolfBall.translation.x
-  balleY = GolfBall.translation.y
-  balleZ = GolfBall.translation.z
-  CamPosX = CameraPos.translation.x
-  CamPosY = CameraPos.translation.y
-  CamPosZ = CameraPos.translation.z
-
-	function KeyPressed(v, t){
-      // Touche 'a' ou fleche gauche
-      // tourne dans le sens horaire
-      if (v == 65601 || v == 65573)
-			{ angleCam = angleCam + 0.02; }
-
-      // Touche 'd' ou fleche droite
-      // tourne la caméra dans le sens anti-horaire
-			if (v == 65604 || v == 65575)
-			{ angleCam = angleCam - 0.02; }
-
-      //Touche 'w' ou fleche haut
-      // build up de la force (augmente la distance que la balle va parcourir)
-      if (v == 65623 || v == 65574){
-        if(multiplicateur < 6.0){
-          multiplicateur += 0.5
-        }
-        if(multiplicateur>=6.0){
-          multiplicateur = 6.0
-        }
-        distanceBalle = distanceBalle + 0.5*multiplicateur
-      }
-      //Touche 's' ou fleche bas
-      //Reset la force du tir et multiplicateur
-      if (v == 65552 || v == 65576){
-        distanceBalle = 0
-        multiplicateur = 0
-      }
-      //Touche 'enter'
-      // calcul distance en X et Z de la balle selon l'angle de la caméra
-      if (v == 65549){
-
-        balleX = GolfBall.translation.x - (Math.sin(angleCam) * distanceBalle)
-        balleZ = GolfBall.translation.z - (Math.cos(angleCam) * distanceBalle)
-
-        CamPosX = CameraPos.translation.x - (Math.sin(angleCam) * distanceBalle)
-        CamPosZ = CameraPos.translation.z - (Math.cos(angleCam) * distanceBalle)
-
-        TimeToStart=t
-        distanceBalle=0
-        multiplicateur=0
+DEF BoutonTerrain1 Anchor{
+url "Jeux terrain noel.wrl"
+children
+[
+ Group
+ {
+   children
+   [
+   Transform{
+     translation -1.5 9.5 -2.9
+    children[
+   Shape
+   {
+      appearance Appearance
+      {
+         material Material
+         {
+            diffuseColor 1 0 0
+         }
       }
 
-		  OrientationCam[0] = 0;
-			OrientationCam[1] = 1; //rotation sur l'axe y
-			OrientationCam[2] = 0;
-			OrientationCam[3] = angleCam;
-	}
+      geometry Box
+      {
+         size 0.5 0.5 0.5
+      }
+   }
+   ]
+ }
 
-  function set_fraction(fraction, temps){
+     Transform
+     {
+       translation -1.3 9.6 -2
+       children
+       [
+       Shape
+       {
+         appearance Appearance
+         {
+           material Material
+           {
+             diffuseColor 0 0 0
+           }
+         }
 
-    value_changedBalle[0]=balleX
-    value_changedBalle[1]=balleY
-    value_changedBalle[2]=balleZ
-
-    value_changedCam[0]=CamPosX
-    value_changedCam[1]=CamPosY
-    value_changedCam[2]=CamPosZ
-
-  }
-	"]	# Fin du corps du script
+         geometry Text
+         {
+           string "Noel"
+           fontStyle FontStyle
+           {
+             size 0.2
+           }
+         }
+       }
+       ]
+     }
+   ]
+ }
+ ]
 }
 
-ROUTE terrain1.isActive TO ChoiceTimer1.enabled
-ROUTE terrain2.isActive TO ChoiceTimer2.enabled
-ROUTE terrain3.isActive TO ChoiceTimer3.enabled
+DEF BoutonTerrain1 Anchor{
+url "Jeux terrain lune.wrl"
+children
+[
+ Group
+ {
+   children
+   [
+   Transform{
+     translation 0 9.5 -2.9
+    children[
+   Shape
+   {
+      appearance Appearance
+      {
+         material Material
+         {
+            diffuseColor  0 1 0
+         }
+      }
 
-#choix Noel
-ROUTE ChoiceTimer1.enabled TO ChoiceTerrain1.Choix
-ROUTE ChoiceTerrain1.PosBalle TO Balle.set_translation
-ROUTE ChoiceTerrain1.PosBalle TO PutterSound.set_location
-ROUTE ChoiceTerrain1.PosBalle TO camera.set_center
-ROUTE ChoiceTerrain1.PosCam TO camcam.set_position
-ROUTE ChoiceTerrain1.StartSong TO sonHiver.startTime
-ROUTE ChoiceTerrain1.StopSong TO sonLune.stopTime
+      geometry Box
+      {
+         size 0.5 0.5 0.5
+      }
+   }
+   ]
+ }
 
-#choix lune
-ROUTE ChoiceTimer2.enabled TO ChoiceTerrain2.Choix
-ROUTE ChoiceTerrain2.PosBalle TO Balle.set_translation
-ROUTE ChoiceTerrain2.PosBalle TO PutterSound.set_location
-ROUTE ChoiceTerrain2.PosBalle TO camera.set_center
-ROUTE ChoiceTerrain2.PosCam TO camcam.set_position
-ROUTE ChoiceTerrain2.StopSong TO sonHiver.stopTime
-ROUTE ChoiceTerrain2.StartSong TO sonLune.startTime
+     Transform
+     {
+       translation -0.19 9.6 -2
+       children
+       [
+       Shape
+       {
+         appearance Appearance
+         {
+           material Material
+           {
+             diffuseColor 0 0 0
+           }
+         }
 
-#choix Terrain 3
-ROUTE ChoiceTimer3.enabled TO ChoiceTerrain3.Choix
-ROUTE ChoiceTerrain3.PosBalle TO Balle.set_translation
-ROUTE ChoiceTerrain3.PosBalle TO PutterSound.set_location
-ROUTE ChoiceTerrain3.PosBalle TO camera.set_center
-ROUTE ChoiceTerrain3.PosCam TO camcam.set_position
-#ROUTE ChoiceTerrain3.StartSong TO sonHiver.startTime
-#ROUTE ChoiceTerrain3.StopSong TO sonLune.stopTime
+         geometry Text
+         {
+           string "Lune"
+           fontStyle FontStyle
+           {
+             size 0.2
+           }
+         }
+       }
+       ]
+     }
+   ]
+ }
+ ]
+}
 
+DEF BoutonTerrain1 Anchor{
+url "Jeux terrain montagne.wrl"
+children
+[
+ Group
+ {
+   children
+   [
+   Transform{
+     translation 1.5 9.5 -2.9
+    children[
+   Shape
+   {
+      appearance Appearance
+      {
+         material Material
+         {
+            diffuseColor 0 0 1
+         }
+      }
 
-#entre dans le script quand on pèse une touche
-ROUTE KS.keyDown TO script.KeyPressed
+      geometry Box
+      {
+         size 0.5 0.5 0.5
+      }
+   }
+   ]
+ }
 
+     Transform
+     {
+       translation 0.95 9.6 -2
+       children
+       [
+       Shape
+       {
+         appearance Appearance
+         {
+           material Material
+           {
+             diffuseColor 1 1 1
+           }
+         }
 
-#rotation de la caméra autour de la balle
-ROUTE script.OrientationCam TO camera.rotation
-
-
-#avancement de la balle et Camera
-ROUTE script.TimeToStart TO Horloge.startTime
-ROUTE script.TimeToStart TO sonPutter.startTime
-
-ROUTE Horloge.fraction_changed TO script.set_fraction
-ROUTE script.value_changedBalle TO Balle.set_translation
-ROUTE script.value_changedBalle TO PutterSound.set_location
-
-ROUTE Horloge.fraction_changed TO script.set_fraction
-ROUTE script.value_changedCam TO camera.set_translation
+         geometry Text
+         {
+           string "Montagne"
+           fontStyle FontStyle
+           {
+             size 0.1
+           }
+         }
+       }
+       ]
+     }
+   ]
+ }
+ ]
+}
