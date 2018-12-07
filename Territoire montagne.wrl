@@ -1,0 +1,89 @@
+#VRML V2.0 utf8
+
+Sound
+{
+  source AudioClip
+  {
+    url "Montagne.mp3"
+    loop TRUE
+  }
+}
+
+Background{
+  skyColor
+  [
+    0.0 0.4 1.0,
+    0.0 0.4 1.0,
+    1.0 1.0 1.0
+  ]
+  skyAngle [1.2, 1.571]
+
+  groundColor
+  [
+    0.1 0.3 0.95,
+    0.1 0.3 0.95,
+    0.0 0.2 0.95,
+  ]
+  groundAngle [ 1.2, 1.571 ]
+}
+
+Transform
+{
+  rotation 0 1 0 -1.57
+  children
+  [
+    Inline
+    {
+      url ["Montagne.wrl"]
+    }
+
+    Inline
+    {
+      url ["tour.wrl"]
+    }
+
+    Collision
+    {
+      children
+      [
+      Inline
+      {
+        url ["rubbery surface.wrl"]
+      }
+      ]
+
+      collide FALSE
+    }
+  ]
+}
+
+DEF Frelions Transform
+{
+  scale 0.2 0.2 0.2
+  translation 0.05 0.75 -3.5
+  children
+  [
+  Inline
+  {
+    url ["groupe de groupes de Frelions.wrl"]
+  }
+  ]
+}
+
+DEF Horloge TimeSensor {
+			cycleInterval 7.0
+			loop TRUE
+		}
+
+DEF Trajectoire OrientationInterpolator {
+			key [ 0.0,  0.25, 0.5, 0.75, 	1.0 ]
+			keyValue [
+					  0.0 0.0 1.0 0.0
+						0.0 0.0 1.0 1.5708
+						0.0 0.0 1.0 3.14159265
+					  0.0 0.0 1.0 4.712
+						0.0 0.0 1.0 6.283 ]
+		}
+
+ROUTE Horloge.fraction_changed TO Trajectoire.set_fraction
+ROUTE Trajectoire.value_changed TO Frelions.set_rotation
