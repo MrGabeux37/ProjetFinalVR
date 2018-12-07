@@ -18,6 +18,7 @@ NavigationInfo{
   type ["NONE"]
 }
 
+#Musique de fond
 Sound
 {
   intensity 0.7
@@ -49,6 +50,7 @@ Background{
   groundAngle [ 1.309, 1.571 ]
 }
 
+#Camera
 Viewpoint{
   fieldOfView 0.785392
   position 0.0 10.0 0.0
@@ -57,6 +59,7 @@ Viewpoint{
   description "Menu"
 }
 
+#Image du menu
 DEF PlaqueArriere Transform{
   translation 0 10 -3
   children Shape{
@@ -72,6 +75,7 @@ DEF PlaqueArriere Transform{
 }
 }
 
+#Bouton du terrain de Noel
 DEF BoutonTerrain1 Anchor{
 url "Jeux terrain noel.wrl"
 children
@@ -132,7 +136,8 @@ children
  ]
 }
 
-DEF BoutonTerrain1 Anchor{
+#Bouton du terrain de la Lune
+DEF BoutonTerrain2 Anchor{
 url "Jeux terrain lune.wrl"
 children
 [
@@ -192,7 +197,8 @@ children
  ]
 }
 
-DEF BoutonTerrain1 Anchor{
+#Bouton du terrain Montagne
+DEF BoutonTerrain3 Anchor{
 url "Jeux terrain montagne.wrl"
 children
 [
